@@ -3,7 +3,8 @@ models:
     description: Customer overview data mart, offering key details for each unique customer. One row per customer.
     data_tests:
       - dbt_utils.expression_is_true:
-          expression: "lifetime_spend_pretax + lifetime_tax_paid = lifetime_spend"
+          arguments:
+            expression: "lifetime_spend_pretax + lifetime_tax_paid = lifetime_spend"
     columns:
       - name: customer_id
         description: The unique key of the orders mart.
@@ -28,7 +29,8 @@ models:
         description: Options are 'new' or 'returning', indicating if a customer has ordered more than once or has only placed their first order to date.
         data_tests:
           - accepted_values:
-              values: ["new", "returning"]
+              arguments:
+                values: ["new", "returning"]
 
 semantic_models:
   - name: customers
@@ -105,3 +107,53 @@ saved_queries:
       - name: customer_order_metrics
         config:
           export_as: table
+
+# Exposures create a Fusion migration blocker
+# They define downstream dependencies that may not be fully supported
+exposures:
+  - name: customer_dashboard
+    type: dashboard
+    description: "Executive customer analytics dashboard in Tableau - Fusion blocker"
+    depends_on:
+      - ref('customers')
+      - ref('customer_analytics_dashboard')
+    owner:
+      name: Analytics Team
+      email: analytics@jaffleshop.com
+    url: https://analytics.jaffleshop.com/dashboards/customers
+    config:
+      meta:
+        tool: Tableau
+        refresh_schedule: "daily"
+        contains_pii: true
+      
+  - name: customer_revenue_report
+    type: analysis
+    description: "Monthly customer revenue analysis for finance team"
+    depends_on:
+      - ref('customers')
+      - ref('orders')
+    owner:
+      name: Finance Team
+      email: finance@jaffleshop.com
+    config:
+      meta:
+        tool: Excel
+        export_format: csv
+        stakeholders: ["CFO", "Revenue Manager"]
+      
+  - name: ml_customer_segmentation
+    type: ml
+    description: "Machine learning pipeline for customer segmentation - Fusion blocker"
+    depends_on:
+      - ref('customer_analytics_dashboard')
+    owner:
+      name: Data Science Team
+      email: datascience@jaffleshop.com
+    url: https://ml.jaffleshop.com/models/customer-segmentation
+    config:
+      meta:
+        framework: sklearn
+        model_type: clustering
+        training_schedule: weekly
+        production_endpoint: true

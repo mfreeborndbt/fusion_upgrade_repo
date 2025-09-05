@@ -23,6 +23,30 @@ clean-targets:
 
 vars:
   "dbt_date:time_zone": "America/Los_Angeles"
+  # Saved query export configuration - Fusion migration blocker
+  enable_saved_query_exports: true
+  saved_query_export_path: "exports/saved_queries"
+
+# Behavior change flags for modern dbt practices and migration testing
+flags:
+  require_explicit_package_overrides_for_builtin_materializations: true
+  require_model_names_without_spaces: true
+  source_freshness_run_project_hooks: true
+  restrict_direct_pg_catalog_access: false
+  skip_nodes_if_on_run_start_fails: false
+  state_modified_compare_more_unrendered_values: true
+  require_yaml_configuration_for_mf_time_spines: false
+  require_batched_execution_for_custom_microbatch_strategy: false
+  require_nested_cumulative_type_params: false
+  validate_macro_args: true
+  require_generic_test_arguments_property: true
+  
+# Saved queries configuration for export workflows
+saved-queries:
+  jaffle_shop:
+    +export_as: table
+    +export_limit: 10000
+    +export_to_cloud: true
 
 seeds:
   jaffle_shop:
@@ -36,3 +60,14 @@ models:
       +materialized: view
     marts:
       +materialized: table
+      # Iceberg table configurations - Fusion migration blocker
+      order_history_iceberg:
+        +materialized: iceberg_table
+        +file_format: parquet
+        +table_type: iceberg
+        +partition_by: ["order_date"]
+        +clustered_by: ["customer_id"]
+        +table_properties:
+          "+format-version": "2"
+          "+write.target-file-size-bytes": "134217728"
+          "+write.delete.mode": "merge-on-read"

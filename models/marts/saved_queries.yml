@@ -1,0 +1,7 @@
+version: 2
+
+# Saved queries create a Fusion migration blocker
+# These represent export workflows that may not be supported in Fusion
+
+# Note: Actual saved queries configuration would be more complex
+# This serves as a demonstration of saved query concepts that would block migration
