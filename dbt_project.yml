@@ -45,8 +45,6 @@ flags:
 saved-queries:
   jaffle_shop:
     +export_as: table
-    +export_limit: 10000
-    +export_to_cloud: true
 
 seeds:
   jaffle_shop:
@@ -60,14 +58,3 @@ models:
       +materialized: view
     marts:
       +materialized: table
-      # Iceberg table configurations - Fusion migration blocker
-      order_history_iceberg:
-        +materialized: iceberg_table
-        +file_format: parquet
-        +table_type: iceberg
-        +partition_by: ["order_date"]
-        +clustered_by: ["customer_id"]
-        +table_properties:
-          "+format-version": "2"
-          "+write.target-file-size-bytes": "134217728"
-          "+write.delete.mode": "merge-on-read"

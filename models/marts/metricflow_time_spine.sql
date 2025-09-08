@@ -1,3 +1,9 @@
+{{
+  config(
+    static_analysis='unsafe'
+  )
+}}
+
 -- metricflow_time_spine.sql
 with
 

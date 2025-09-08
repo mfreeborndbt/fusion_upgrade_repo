@@ -1,9 +1,7 @@
 {{
   config(
     materialized='view',
-    deprecation_date='2024-06-01',
-    deprecation_reason='This model uses legacy business logic and will be replaced by new order analytics models',
-    description='Legacy order summary model scheduled for deprecation - Fusion blocker'
+    description='Legacy order summary model - Fusion compatible'
   )
 }}
 

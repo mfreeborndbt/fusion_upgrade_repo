@@ -1,9 +1,7 @@
 {{
   config(
     materialized='table',
-    restrict_access=true,
-    access_level='protected',
-    description='Financial reporting model with protected access - Fusion blocker'
+    description='Financial reporting model with protected access - Fusion compatible'
   )
 }}
 
